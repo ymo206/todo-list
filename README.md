@@ -15,7 +15,7 @@ A simple web application for keeping track of school assignments and daily tasks
 - JavaScript
 
 ## How to Use
-Once the application is built, open index.html in a web browser.
+Open index.html in a web browser. Type a task and press Enter or click "Add". Check the box to mark a task as completed, and click "Delete" to remove it. Tasks are saved in your browser with localStorage, so they stay after you refresh.
 
 ## About
 This project was created for TCSS 490 at the University of Washington Tacoma.

@@ -1,0 +1,156 @@
+/* Basic reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f2f4f8;
+  color: #222;
+  padding: 40px 16px;
+}
+
+/* Main card that holds the app */
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 32px 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+h1 {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Add task form */
+.task-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.task-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 12px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.task-form input:focus {
+  outline: none;
+  border-color: #4a6cf7;
+  box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+}
+
+.task-form button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: #4a6cf7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.task-form button:hover {
+  background-color: #3653d4;
+}
+
+/* Task list */
+.task-list {
+  list-style: none;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.task-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.task-text {
+  flex: 1;
+  word-break: break-word;
+}
+
+/* Completed tasks are crossed out and faded */
+.task-item.completed .task-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.delete-button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #d93025;
+  background-color: transparent;
+  border: 1px solid #d93025;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  color: #ffffff;
+  background-color: #d93025;
+}
+
+.empty-message {
+  text-align: center;
+  color: #888;
+  padding: 16px 0;
+}
+
+.task-count {
+  margin-top: 16px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Hides the label visually but keeps it for screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* Small screens (phones) */
+@media (max-width: 480px) {
+  body {
+    padding: 16px;
+  }
+
+  .container {
+    padding: 24px 16px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .task-form {
+    flex-direction: column;
+  }
+}
