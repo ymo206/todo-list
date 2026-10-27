@@ -129,7 +129,7 @@ falls back to reading the raw text.
 ## October 27, 2026 – Running it in GitHub Codespaces
 
 ### Problem
-My computer can't run Linux or install software, so I can't run `helper.py`
+Device can't run Linux or install software, so I can't run `helper.py`
 and `claude -p` on it.
 
 ### Plan
@@ -151,4 +151,59 @@ which my code didn't expect.
 Not yet run in a real codespace. If the page shows "requests are only accepted
 from this page", the Codespaces headers differ from what I expected; note the
 exact address and fix the Origin check.
+
+
+## October 27, 2026 – Run with Claude Code
+
+### Setup
+- Created a codespace from the repo, installed Claude Code with
+  `curl -fsSL https://claude.ai/install.sh | bash` (version 2.1.311).
+- Ran the tests in the codespace: 27 passed. Python 3.14 printed some
+  ResourceWarnings about unclosed test responses; harmless, but worth cleaning
+  up later.
+- Started `python3 helper.py`; it printed the Codespaces address and the page
+  loaded there. The Break down button appeared, so the new address check in
+  script.js worked.
+
+### Problems
+1. **I stopped the helper by accident.** I pressed Ctrl+C in its terminal,
+   which stops the program instead of copying. Lesson: leave the helper's
+   terminal alone and open pages from the Ports tab.
+2. **First Break down failed with a blank error: "claude exited 1:".**
+   Running `echo "test" | claude -p "Say hi" --output-format json` by hand
+   showed the real cause: `"result":"Not logged in · Please run /login"`.
+   The message was blank because in JSON mode Claude Code reports errors on
+   stdout, and the helper only showed stderr. My code was wrong about where
+   the error would be, not the model.
+   - Fix: the helper now reads the error out of Claude Code's JSON output and
+     adds a hint when it's a login problem.
+3. **Logging in from a codespace failed at the last step.** After approving,
+   the browser was sent to a `localhost` address that only exists inside the
+   codespace ("localhost refused to connect"). I copied that address and ran
+   `curl "<address>"` in a codespace terminal, which finished the login.
+
+### Result
+After logging in, Break down worked with real Claude. For
+"Finish TCSS 490 Artifact 3 reflection" it suggested five steps:
+- Reread the Artifact 3 reflection prompt and rubric requirements
+- Review your Artifact 3 work and jot notes on what went well and what didn't
+- Outline the reflection's main points to match each rubric section
+- Write a full first draft of the reflection
+- Revise for clarity, check length and formatting, then submit
+
+No "skipped" notes appeared, so the answer passed every check on the first
+attempt. The Origin check accepted the Codespaces address (no "requests are
+only accepted from this page" error), so both earlier "Not yet verified"
+items are now verified.
+
+
+### What I learned
+- Most of the problems were in setup and my own code's assumptions, not in
+  what the model did. Because Claude's job was small and the helper checks
+  everything around it, each failure clearly came from one side or the other.
+
+
+### Next steps
+- Clean up the ResourceWarnings in the tests.
+- Keep using it on real tasks and note any bad suggestions.
 
