@@ -126,3 +126,29 @@ falls back to reading the raw text.
 - Note how long breakdowns take and whether the steps are actually useful.
 - Update the Artifact 3 card on my portfolio.
 
+## October 27, 2026 – Running it in GitHub Codespaces
+
+### Problem
+My computer can't run Linux or install software, so I can't run `helper.py`
+and `claude -p` on it.
+
+### Plan
+Run the helper in GitHub Codespaces, which gives me a Linux machine in the
+browser. Codespaces shows the page at an `https://...app.github.dev` address,
+which my code didn't expect.
+
+### What changed
+- `script.js`: the Break down button used to appear only on `http://` pages.
+  Now it checks for the helper everywhere except GitHub Pages and files opened
+  directly.
+- `helper.py`: the Origin check now also accepts the Codespaces address
+  (which Codespaces passes on in the `X-Forwarded-Host` header). Other
+  websites are still refused. On startup it prints the Codespaces address.
+- `tests/test_helper.py`: 7 new tests for those addresses (27 total, all pass).
+- README: Codespaces instructions.
+
+### Not yet verified
+Not yet run in a real codespace. If the page shows "requests are only accepted
+from this page", the Codespaces headers differ from what I expected; note the
+exact address and fix the Origin check.
+

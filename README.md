@@ -37,6 +37,22 @@ Then open **http://127.0.0.1:8765** (always this exact address: tasks are
 saved per address, so `localhost` would show a separate, empty list).
 Requires Python 3.10+ and Claude Code installed and logged in.
 
+### Running it in GitHub Codespaces (nothing to install locally)
+
+1. On the repo page: **Code → Codespaces → Create codespace on main**.
+2. In the codespace terminal, install and log in to Claude Code:
+   ```bash
+   curl -fsSL https://claude.ai/install.sh | bash
+   ```
+   Open a new terminal (so `claude` is on the PATH), run `claude`, log in,
+   then type `/exit`.
+3. Run `python3 helper.py`. It prints the page's address, which looks like
+   `https://<codespace-name>-8765.app.github.dev`. Open that (or use
+   **Open in Browser** when Codespaces offers it).
+
+The forwarded port is private by default, so only my GitHub account can open
+it. Stop the codespace when done so it doesn't use up free hours.
+
 On GitHub Pages, or if `index.html` is opened directly, the helper isn't
 there, so the Break down button is hidden and the app works as before.
 
@@ -51,7 +67,7 @@ anything to my list by itself.
 
 | Step | Done by | Check |
 |------|---------|-------|
-| Accept the request | `helper.py` | Only from this page (Origin check, JSON only), only on 127.0.0.1, task must be 1 to 200 characters. Bad requests never reach Claude |
+| Accept the request | `helper.py` | Only from this page (Origin must match the page's own address, including a Codespaces address; JSON only), only on 127.0.0.1, task must be 1 to 200 characters. Bad requests never reach Claude |
 | Suggest steps | **Claude** | One `claude -p` call, 120 s timeout |
 | Parse the answer | `helper.py` | Unwrap Claude Code's JSON output, strip stray code fences or prose |
 | Retry | `helper.py` | One retry if the answer is unusable, then a clear error message |

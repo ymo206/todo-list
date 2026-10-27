@@ -297,9 +297,10 @@ function addSteps(parentId) {
 }
 
 // Check whether helper.py is serving this page
+// (locally at http://127.0.0.1:8765, or at a GitHub Codespaces address)
 function checkHelper() {
-  if (location.protocol !== "http:") {
-    return; // GitHub Pages (https) or a file opened directly
+  if (location.protocol === "file:" || location.hostname.endsWith("github.io")) {
+    return; // opened directly, or on GitHub Pages: no helper there
   }
   fetch("/api/health")
     .then(function (response) {

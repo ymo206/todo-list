@@ -14,6 +14,7 @@ import subprocess
 import tempfile
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from urllib.parse import urlsplit
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_FILES = {
@@ -128,6 +129,33 @@ def breakdown(task_text, runner=run_claude):
     raise RuntimeError(f"Claude's answer couldn't be used ({last_error}). Try again.")
 
 
+def origin_allowed(origin, host, forwarded_host=None):
+    """Is this request coming from the page the helper itself served?
+
+    Locally the page is http://127.0.0.1:8765. In GitHub Codespaces it is an
+    https://...app.github.dev address, and Codespaces passes that address on
+    in the X-Forwarded-Host header, so either one may match.
+    """
+    if not origin:
+        return True  # not sent by a browser page (e.g. curl or the tests)
+    parts = urlsplit(origin)
+    if parts.scheme not in ("http", "https"):
+        return False
+    allowed = {host}
+    if forwarded_host:
+        allowed.add(forwarded_host.split(",")[0].strip())
+    return parts.netloc in allowed
+
+
+def codespaces_url(port):
+    """The browser address for this port when running in GitHub Codespaces."""
+    name = os.environ.get("CODESPACE_NAME")
+    domain = os.environ.get("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN", "app.github.dev")
+    if os.environ.get("CODESPACES") == "true" and name:
+        return f"https://{name}-{port}.{domain}"
+    return None
+
+
 def append_log(entry):
     try:
         with open(LOG_FILE, "a") as f:
@@ -174,9 +202,9 @@ def make_handler(runner=run_claude):
             # Only this page may call the helper. Requiring JSON means another
             # website can't send a simple cross-site request, and the Origin
             # check stops anything else that gets through.
-            origin = self.headers.get("Origin")
-            host = self.headers.get("Host", "")
-            if origin and origin not in (f"http://{host}",):
+            if not origin_allowed(self.headers.get("Origin"),
+                                  self.headers.get("Host", ""),
+                                  self.headers.get("X-Forwarded-Host")):
                 return self.send_json(403, {"error": "requests are only accepted from this page"})
             if not self.headers.get("Content-Type", "").startswith("application/json"):
                 return self.send_json(415, {"error": "send JSON"})
@@ -208,8 +236,13 @@ def main():
     args = p.parse_args()
     # 127.0.0.1 only: nothing else on the network can reach the helper.
     server = ThreadingHTTPServer(("127.0.0.1", args.port), make_handler())
-    print(f"To-do list running at http://127.0.0.1:{args.port}  (Ctrl+C to stop)")
-    print("Always open it at that exact address: your tasks are saved per address.")
+    url = codespaces_url(args.port)
+    if url:
+        print(f"To-do list running in Codespaces at {url}  (Ctrl+C to stop)")
+        print("If it asks you to sign in to GitHub, do; the address is private to you.")
+    else:
+        print(f"To-do list running at http://127.0.0.1:{args.port}  (Ctrl+C to stop)")
+    print("Always open it at that same address: your tasks are saved per address.")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
