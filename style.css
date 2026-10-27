@@ -136,6 +136,123 @@ h1 {
   white-space: nowrap;
 }
 
+/* ---------- Break down ---------- */
+
+/* Steps sit under their task, indented with a thin line */
+.task-item.subtask {
+  margin-left: 32px;
+  padding-left: 12px;
+  border-left: 2px solid #dfe5fd;
+}
+
+.break-button {
+  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: #4a6cf7;
+  background-color: transparent;
+  border: 1px solid #4a6cf7;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.break-button:hover:not(:disabled) {
+  color: #ffffff;
+  background-color: #4a6cf7;
+}
+
+.break-button:disabled {
+  color: #999;
+  border-color: #ccc;
+  cursor: default;
+}
+
+/* Panel for reviewing Claude's suggested steps */
+.suggestions {
+  margin: 8px 0 12px 32px;
+  padding: 14px 16px;
+  background-color: #f5f7ff;
+  border: 1px solid #dfe5fd;
+  border-radius: 8px;
+  color: #444;
+}
+
+.suggestions-heading {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.suggestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+}
+
+.suggestion input {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.suggestion span {
+  word-break: break-word;
+}
+
+.suggestions-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+.suggestions-error {
+  color: #d93025;
+  margin-bottom: 4px;
+}
+
+.suggestions-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.suggestions-actions button {
+  padding: 8px 14px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.add-steps-button {
+  color: #ffffff;
+  background-color: #4a6cf7;
+  border: none;
+}
+
+.add-steps-button:hover {
+  background-color: #3653d4;
+}
+
+.dismiss-button {
+  color: #444;
+  background-color: transparent;
+  border: 1px solid #ccc;
+}
+
+.dismiss-button:hover {
+  background-color: #eee;
+}
+
+/* Keyboard focus is always visible */
+button:focus-visible,
+input[type="checkbox"]:focus-visible {
+  outline: 3px solid rgba(74, 108, 247, 0.5);
+  outline-offset: 2px;
+}
+
 /* Small screens (phones) */
 @media (max-width: 480px) {
   body {
@@ -152,5 +269,15 @@ h1 {
 
   .task-form {
     flex-direction: column;
+  }
+
+  /* Let the buttons wrap below the task text on narrow screens */
+  .task-item {
+    flex-wrap: wrap;
+  }
+
+  .task-item.subtask,
+  .suggestions {
+    margin-left: 16px;
   }
 }

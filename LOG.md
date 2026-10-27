@@ -63,3 +63,66 @@ Also checked screenshots at desktop (1200px) and phone (375px) widths to confirm
 ### Next Steps
 - Test the app manually in my own browser.
 - Add the completed project to my portfolio.
+
+## October 27, 2026 – Artifact 3: putting Claude inside the app
+
+### Plan
+Artifact 3 asks for a model that does real work every time the feature runs.
+I extended this app instead of starting a new project. Feature: a
+**Break down** button that turns a vague task ("CS 490 artifact 3") into
+smaller steps I can check off.
+
+### Decisions
+- **Claude Code, not the API.** The API costs money and a key can't be kept
+  secret in a GitHub Pages site. So a small local Python helper (`helper.py`)
+  serves the app and runs `claude -p` when I click the button.
+- **Claude suggests, I decide.** Claude only returns a list of steps. Code
+  cleans them, and nothing is added until I choose which ones to keep.
+- **Small, checkable output.** Claude returns `{"subtasks": [...]}`; the helper
+  rejects anything that doesn't fit and shows what it dropped. That way I can
+  tell whether a bad result came from Claude or from my code.
+- **Still works on GitHub Pages.** Without the helper, the button is hidden.
+
+### What changed
+- New `helper.py`: local server (127.0.0.1 only), one `/api/breakdown`
+  endpoint, one retry, cleaning rules, request log in `.breakdown-log.jsonl`.
+- `script.js`: Break down button, review panel, steps saved with a
+  `parentId` and shown indented. Ids now come from `newId()` so several steps
+  added at once never share an id (`Date.now()` alone could repeat).
+- `style.css`: styles for steps and the review panel, visible keyboard focus,
+  buttons wrap on phones.
+- New `tests/test_helper.py`: 20 tests with a fake Claude, including the
+  server itself and requests from another website being refused.
+
+### Testing
+First version generated with Claude in a claude.ai chat, then tested with a
+stand-in for the `claude` command (it returns a fixed answer).
+
+| Test | Result |
+|------|--------|
+| 20 unit and server tests | Pass |
+| Button appears when served by helper.py | Pass |
+| Button shows "Thinking…" while waiting | Pass |
+| "1." prefix stripped and repeated step dropped, with a note shown | Pass |
+| Unchecked step is not added | Pass |
+| Steps indented under their task, still there after refresh | Pass |
+| No horizontal scroll at 375px | Pass |
+| Button hidden without helper (file opened directly) | Pass |
+| Invalid answer: one retry, then a clear error, logged | Pass |
+| No JavaScript errors | Pass |
+
+Problems found while testing: the stand-in's first version produced invalid
+JSON. That turned out to be useful, because it showed the retry and error
+message working. I also changed the startup message to give
+`http://127.0.0.1:8765`, since tasks are saved per address.
+
+### Not yet verified
+Not yet run with the real `claude -p`. The helper expects Claude Code's
+`--output-format json` output to have a `result` field; if it doesn't, it
+falls back to reading the raw text.
+
+### Next steps
+- Run it with real Claude Code on my actual tasks and record what happens.
+- Note how long breakdowns take and whether the steps are actually useful.
+- Update the Artifact 3 card on my portfolio.
+

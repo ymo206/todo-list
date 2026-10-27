@@ -1,0 +1,3 @@
+__pycache__/
+# Break down history (local only; remove this line to commit it for your reflection)
+.breakdown-log.jsonl
